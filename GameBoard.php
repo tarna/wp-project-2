@@ -27,11 +27,9 @@ if (!isset($_SESSION['answered'])) {
                         $boxKey = $category . '_' . $i;
                         $points = ($i + 1) * 100;
                         if (in_array($boxKey, $_SESSION['answered'])) {
-                            // Question already answered: gray out box, no link
                             echo "<div class='cell' style='background-color: gray;'></div>";
                         } else {
-                            // Question not answered: clickable link
-                            echo "<div class='cell'>
+                            echo "<div class='cell cell-unanswered'>
                                     <a href='question.php?category=" . urlencode($category) . "&index=$i' 
                                        style='color: black; text-decoration: none; display: block; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center;'>
                                         $points
