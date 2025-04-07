@@ -130,6 +130,10 @@ function switchTurn() {
     file_put_contents("turn.txt", $nextUser);
 }
 
+function setTurn($user) {
+    file_put_contents("turn.txt", $user);
+}
+
 function addCurrentScore($user, $points) {
     if (!isset($_SESSION['current_score'])) {
         $_SESSION['current_score'] = [];

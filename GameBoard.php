@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $questions = getQuestions(true);
     $_SESSION['answered'] = [];
     resetCurrentScores();
+    setTurn($user1);
 } else {
     $user1 = $_SESSION['user1'];
     $user2 = $_SESSION['user2'];

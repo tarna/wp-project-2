@@ -53,7 +53,7 @@ require_once("lib.php");
             <h1>Login</h1>
         </div>
 
-        <form action="/GameBoard.php" method="post">
+        <form action="/~tgadhiraju1/projects/jeopardy/GameBoard.php" method="post">
             <div>
                 User 1
                 <input type="text" id="user1" name="user1">
