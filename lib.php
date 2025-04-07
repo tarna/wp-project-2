@@ -1,18 +1,22 @@
 <?php
 
-function generateQuestions() {
-    $url = "http://cluebase.lukelav.in/clues?limit=1000&order_by=category&sort=desc";
+function getQuestions($generateNew = false) {
+    if ($generateNew) {
+        $url = "http://cluebase.lukelav.in/clues?limit=1000&order_by=category&sort=desc";
 
-    $ch = curl_init($url);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPGET, true);
+        $response = curl_exec($ch);
 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPGET, true);
-    $response = curl_exec($ch);
+        if (curl_errno($ch)) {
+            curl_close($ch);
+            echo json_encode(["error" => "cURL Error: " . curl_error($ch)]);
+            return [];
+        }
 
-    if (curl_errno($ch)) {
-        echo json_encode(["error" => "cURL Error: " . curl_error($ch)]);
-    } else {
         $data = json_decode($response, true);
+        curl_close($ch);
 
         if (json_last_error() === JSON_ERROR_NONE) {
             if (isset($data['status']) && $data['status'] === 'success' && isset($data['data'])) {
@@ -76,31 +80,17 @@ function generateQuestions() {
                 }
 
                 file_put_contents('questions.txt', $fileContent);
-
-                echo json_encode(["status" => "success", "data" => $result]);
             } else {
                 echo json_encode(["error" => "Invalid response structure."]);
+                return [];
             }
         } else {
             echo json_encode(["error" => "Error decoding JSON: " . json_last_error_msg()]);
+            return [];
         }
     }
 
-    curl_close($ch);
-}
-
-function readQuestions() {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,"http://localhost/api.php");
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array('action' => 'read')));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    curl_close ($ch);
-    return json_decode($response, true);
-}
-
-function getQuestions() {
+    // Read questions from the file
     $file = file("questions.txt");
     $questions = [];
     $currentCategory = "";

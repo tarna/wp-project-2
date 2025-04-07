@@ -1,7 +1,6 @@
 <?php
 require_once("lib.php");
 session_start();
-$questions = getQuestions();
 
 // Track answered questions in session
 if (!isset($_SESSION['answered'])) {
@@ -15,9 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $_SESSION['user1'] = $user1;
     $_SESSION['user2'] = $user2;
+
+    $questions = getQuestions(true);
+    $_SESSION['answered'] = [];
 } else {
     $user1 = $_SESSION['user1'];
     $user2 = $_SESSION['user2'];
+    $questions = getQuestions();
 }
 
 $currentUser = getCurrentUser();
@@ -60,9 +63,9 @@ $user2Score = getScore($user2);
         <?php endforeach; ?>
     </div>
     <div class="bottom">
-         <?php echo "<div>$user1's Points: $$user1Score</div>"?>
+        <?php echo "<div>$user1's Points: $$user1Score</div>"?>
         <?php echo "<div>$currentUser's Turn</div>" ?>
-         <?php echo "<div>$user2's Points: $$user2Score</div>"?>
+        <?php echo "<div>$user2's Points: $$user2Score</div>"?>
     </div>
 </body>
 </html>
