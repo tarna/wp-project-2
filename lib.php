@@ -31,7 +31,7 @@ function getQuestions($generateNew = false) {
                 }
 
                 // Only these categories will be chosen
-                $requestedCategories = ["ZOO LAND", "x 2", "small countries", "poetry", "mini-mountains", "iPOD, YOUTUBE OR WII"];
+                $requestedCategories = ["ZOO LAND", "“WH”AT IS IT?", "small countries", "poetry", "mini-mountains", "iPOD, YOUTUBE OR WII", "steve jobs|"];
 
                 // Filter categories based on the requested categories
                 if (!empty($requestedCategories)) {
@@ -130,15 +130,39 @@ function switchTurn() {
     file_put_contents("turn.txt", $nextUser);
 }
 
-function updateScore($user, $points) {
+function addCurrentScore($user, $points) {
+    if (!isset($_SESSION['current_score'])) {
+        $_SESSION['current_score'] = [];
+    }
+
+    if (!isset($_SESSION['current_score'][$user])) {
+        $_SESSION['current_score'][$user] = 0;
+    }
+
+    $_SESSION['current_score'][$user] += $points;
+}
+
+function getCurrentScore($user) {
+    if (isset($_SESSION['current_score']) && isset($_SESSION['current_score'][$user])) {
+        return $_SESSION['current_score'][$user];
+    }
+    return 0;
+}
+
+function resetCurrentScores() {
+    if (isset($_SESSION['current_score'])) {
+        unset($_SESSION['current_score']);
+    }
+}
+
+function updateHighScore($user, $points) {
     $lines = file("users.txt");
     $userExists = false;
 
     foreach ($lines as &$line) {
         if (strpos($line, $user) !== false) {
             preg_match('/(\d+)/', $line, $matches);
-            $currentScore = (int)$matches[0];
-            $newScore = $currentScore + $points;
+            $newScore = $points;
             $line = "<li> $user: $newScore </li>\n";
             $userExists = true;
             break;

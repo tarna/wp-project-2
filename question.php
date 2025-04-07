@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($userAnswer === $correctAnswer) {
         $pointsToAdd = ($index + 1) * 100;
-        updateScore($currentUser, $pointsToAdd);
+        addCurrentScore($currentUser, $pointsToAdd);
         $message = "Correct! +$pointsToAdd points to $currentUser.";
     } else {
         $message = "Incorrect! The correct answer was: $correctAnswer.";
@@ -32,9 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     switchTurn();
 
-    echo "<p>$message</p>";
-    echo "<a href='GameBoard.php'>Return to Board</a>";
-    exit;
+    // echo "<p>$message</p>";
+    // echo "<a href=' GameBoard.php'>Return to Board</a>";
 }
 ?>
 
@@ -42,13 +41,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html>
 <head>
     <title>Question</title>
+    <link rel="stylesheet" type="text/css" href="question.css">
+
 </head>
 <body>
-    <h2><?= htmlspecialchars($questionText) ?></h2>
-    <form method="post">
-        <label>Your Answer:</label>
-        <input type="text" name="answer" required>
-        <button type="submit">Submit</button>
-    </form>
+<?php 
+if (isset($userAnswer)) {
+    echo "<div class='info'><p>$message</p>";
+    echo "<a href=' GameBoard.php'>Return to Board</a></div>";
+} else {
+    $text = htmlspecialchars($questionText);
+    echo "<div class='info'>
+        <div><h1>Question</h1></div>
+        <div><h2>$text</h2></div>
+        <div>
+            <form method='post'>
+                <label>Your Answer:</label>
+                <input type='text' name='answer' required>
+                <button type='submit'>Submit</button>
+            </form>
+        </div>
+    </div>";
+}
+?>
 </body>
 </html>

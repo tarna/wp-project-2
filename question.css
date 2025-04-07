@@ -1,0 +1,28 @@
+body{
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: blue;
+    font-family: "Times New Roman", Times, serif;
+    overflow: hidden;
+}
+
+.info{
+    display:flex;
+    flex-direction:column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    border:2px solid lightslategray;
+    background-color: lightskyblue;
+    margin-right: 10%;
+    margin-left: 10%;
+    margin-top: 5%;
+}
+
+p{
+    font-size:20px;
+    color: black;
+}

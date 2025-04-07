@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $questions = getQuestions(true);
     $_SESSION['answered'] = [];
+    resetCurrentScores();
 } else {
     $user1 = $_SESSION['user1'];
     $user2 = $_SESSION['user2'];
@@ -25,8 +26,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $currentUser = getCurrentUser();
 
-$user1Score = getScore($user1);
-$user2Score = getScore($user2);
+$user1Score = getCurrentScore($user1);
+$user2Score = getCurrentScore($user2);
+
+if (sizeof($_SESSION['answered']) >= 20) {
+    $_SESSION['answered'] = [];
+    resetCurrentScores();
+
+    if ($user1Score > getScore($user1)) {
+        updateHighScore($user1, $user1Score);
+    }
+    if ($user2Score > getScore($user2)) {
+        updateHighScore($user2, $user2Score);
+    }
+
+    header("Location: start.php");
+    exit();
+}
 
 ?>
 <!DOCTYPE html>
@@ -40,7 +56,7 @@ $user2Score = getScore($user2);
     <div class="row">
         <?php foreach ($questions as $category => $qs): ?>
             <div class="column">
-                <div class="cell" style="background-color: darkblue; color: black; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+                <div class="cell" style="background-color: blue; color: black; font-weight: bold; display: flex; align-items: center; justify-content: center;">
                     <?= htmlspecialchars($category) ?>
                 </div>
                 <?php foreach ($qs as $i => $q): ?>

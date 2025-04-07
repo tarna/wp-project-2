@@ -5,10 +5,11 @@ body{
     height: 100vh;
     background-color: black;
     font-family: "Times New Roman", Times, serif;
+    overflow: hidden;
 }
 
 .row{
-    height:90%;
+    height:80%;
     display:flex;
     flex-direction:row;
 }
@@ -23,7 +24,7 @@ body{
 .cell{
     height:20%;
     width:auto;
-    background-color: rgb(72, 72, 252);
+    background-color: lightskyblue;
     border: 3px solid black;
 }
 
