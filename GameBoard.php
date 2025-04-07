@@ -1,8 +1,13 @@
 <?php
 require_once("lib.php");
+session_start();
 $questions = getQuestions();
-?>
 
+// Track answered questions in session
+if (!isset($_SESSION['answered'])) {
+    $_SESSION['answered'] = [];
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,19 +23,25 @@ $questions = getQuestions();
                     <?= htmlspecialchars($category) ?>
                 </div>
                 <?php foreach ($qs as $i => $q): ?>
-                    <div class="cell">
-                        <a href="question.php?category=<?= urlencode($category) ?>&index=<?= $i ?>" style="color: black; text-decoration: none; display: block; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center;">
-                            <?= ($i + 1) * 100 ?>
-                        </a>
-                    </div>
+                    <?php
+                        $boxKey = $category . '_' . $i;
+                        $points = ($i + 1) * 100;
+                        if (in_array($boxKey, $_SESSION['answered'])) {
+                            // Question already answered: gray out box, no link
+                            echo "<div class='cell' style='background-color: gray;'></div>";
+                        } else {
+                            // Question not answered: clickable link
+                            echo "<div class='cell'>
+                                    <a href='question.php?category=" . urlencode($category) . "&index=$i' 
+                                       style='color: black; text-decoration: none; display: block; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center;'>
+                                        $points
+                                    </a>
+                                  </div>";
+                        }
+                    ?>
                 <?php endforeach; ?>
             </div>
         <?php endforeach; ?>
-    </div>
-
-    <div class="bottom">
-        <div style="padding: 10px;">Current Turn: <?= file_exists("turn.txt") ? htmlspecialchars(trim(file_get_contents("turn.txt"))) : "User 1" ?></div>
-        <div style="padding: 10px;"><a href="start.php" style="color:white;">Start New Game</a></div>
     </div>
 </body>
 </html>
