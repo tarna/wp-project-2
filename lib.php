@@ -121,11 +121,70 @@ function getQuestions() {
                         'question' => $questionText,
                         'answer' => $answerText
                     ];
-                    $i++; // Skip the answer line
+                    $i++;
                 }
             }
         }
     }
 
     return $questions;
+}
+
+function getCurrentUser() {
+    return file_exists("turn.txt") ? trim(file_get_contents("turn.txt")) : "User 1";
+}
+
+function switchTurn() {
+    $current = getCurrentUser();
+    $nextUser = ($current === $_SESSION['user1']) ? $_SESSION['user2'] : $_SESSION['user1'];
+    file_put_contents("turn.txt", $nextUser);
+}
+
+function updateScore($user, $points) {
+    $lines = file("users.txt");
+    $userExists = false;
+
+    foreach ($lines as &$line) {
+        if (strpos($line, $user) !== false) {
+            preg_match('/(\d+)/', $line, $matches);
+            $currentScore = (int)$matches[0];
+            $newScore = $currentScore + $points;
+            $line = "<li> $user: $newScore </li>\n";
+            $userExists = true;
+            break;
+        }
+    }
+
+    if (!$userExists) {
+        $lines[] = "<li> $user: $points </li>\n";
+    }
+
+    file_put_contents("users.txt", implode("", $lines));
+}
+
+function getScore($user) {
+    $lines = file("users.txt");
+    foreach ($lines as $line) {
+        if (strpos($line, $user) !== false) {
+            preg_match('/(\d+)/', $line, $matches);
+            return isset($matches[0]) ? (int)$matches[0] : 0;
+        }
+    }
+    return 0;
+}
+
+function getLeaderboard() {
+    $lines = file("users.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $users = [];
+
+    foreach ($lines as $line) {
+        if (preg_match('/<li>\s*(.+?):\s*(\d+)\s*<\/li>/', $line, $matches)) {
+            $user = trim($matches[1]);
+            $score = (int) $matches[2];
+            $users[$user] = $score;
+        }
+    }
+
+    arsort($users);
+    return array_slice($users, 0, 5, true);
 }

@@ -7,6 +7,24 @@ $questions = getQuestions();
 if (!isset($_SESSION['answered'])) {
     $_SESSION['answered'] = [];
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Process the form data
+    $user1 = $_POST['user1'];
+    $user2 = $_POST['user2'];
+
+    $_SESSION['user1'] = $user1;
+    $_SESSION['user2'] = $user2;
+} else {
+    $user1 = $_SESSION['user1'];
+    $user2 = $_SESSION['user2'];
+}
+
+$currentUser = getCurrentUser();
+
+$user1Score = getScore($user1);
+$user2Score = getScore($user2);
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -40,6 +58,11 @@ if (!isset($_SESSION['answered'])) {
                 <?php endforeach; ?>
             </div>
         <?php endforeach; ?>
+    </div>
+    <div class="bottom">
+         <?php echo "<div>$user1's Points: $$user1Score</div>"?>
+        <?php echo "<div>$currentUser's Turn</div>" ?>
+         <?php echo "<div>$user2's Points: $$user2Score</div>"?>
     </div>
 </body>
 </html>

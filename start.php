@@ -1,3 +1,7 @@
+<?php
+require_once("lib.php");
+?>
+
 <html> 
 <head> 
 <title>Jeopardy!</title> 
@@ -49,7 +53,7 @@
             <h1>Login</h1>
         </div>
 
-        <form action="https://codd.cs.gsu.edu/~ndermer1/WP/Project/02/GameBoard.php" method="post">
+        <form action="/GameBoard.php" method="post">
             <div>
                 User 1
                 <input type="text" id="user1" name="user1">
@@ -71,28 +75,14 @@
     </div>
 
     <?php
-    $lines = file('users.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    $users = [];
-    
-    //Seperate user and score
-    foreach ($lines as $line){
-        // Use regex to extract user and score
-        if(preg_match('/User (\d+): (\d+)/', $line, $matches)){
-            $user = 'User ' . $matches[1];
-            $score = (int)$matches[2];
-            $users[$user] = $score;
-        }
-    }
+    $leaderboard = getLeaderboard();
 
-    //Sort array by scores in descending order
-    arsort($users);
-
-    //Output sorted useres
-    echo "<div class=leaderboard>";
+    // Display the leaderboard
+    echo "<div class='leaderboard'>";
     echo "<h1>Leaderboard</h1>";
     echo "<ol>";
-    foreach ($users as $user => $score) {
-        echo "<li> $user: $score </li>\n";
+    foreach ($leaderboard as $user => $score) {
+        echo "<li>$user: $score</li>";
     }
     echo "</ol>";
     echo "</div>";
