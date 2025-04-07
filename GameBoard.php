@@ -1,140 +1,36 @@
 <?php
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Process the form data
-        	$user1 = $_POST['user1'];
-        	$user2 = $_POST['user2'];
-		}
+require_once("lib.php");
+$questions = getQuestions();
 ?>
 
-<html> 
-<head> 
-<title>Jeopardy!</title> 
-<link rel="stylesheet" type="text/css" href="boardstyle.css">
-</head> 
-<body> 
-
-    <form action="https://codd.cs.gsu.edu/~ndermer1/WP/Project/02/question.php" method="post">
-        <div class="row">
-            <!-- Column 1 -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jeopardy Game Board</title>
+    <link rel="stylesheet" type="text/css" href="boardstyle.css">
+</head>
+<body>
+    <h1 style="color:white;">Jeopardy</h1>
+    <div class="row">
+        <?php foreach ($questions as $category => $qs): ?>
             <div class="column">
-                <div class="cell">
-                    <h1>Title 1</h1>
+                <div class="cell" style="background-color: darkblue; color: black; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+                    <?= htmlspecialchars($category) ?>
                 </div>
-                <div class="cell">
-                    <h1>$100</h1>
-                </div>
-                <div class="cell">
-                    <h1>$200</h1>
-                </div>
-                <div class="cell">
-                    <h1>$300</h1>
-                </div>
-                <div class="cell">
-                    <h1>$400</h1>
-                </div>
+                <?php foreach ($qs as $i => $q): ?>
+                    <div class="cell">
+                        <a href="question.php?category=<?= urlencode($category) ?>&index=<?= $i ?>" style="color: black; text-decoration: none; display: block; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center;">
+                            <?= ($i + 1) * 100 ?>
+                        </a>
+                    </div>
+                <?php endforeach; ?>
             </div>
-
-            <!-- Column 2 -->
-            <div class="column">
-                <div class="cell">
-                    <h1>Title 2</h1>
-                </div>
-                <div class="cell">
-                    <h1>$100</h1>
-                </div>
-                <div class="cell">
-                    <h1>$200</h1>
-                </div>
-                <div class="cell">
-                    <h1>$300</h1>
-                </div>
-                <div class="cell">
-                    <h1>$400</h1>
-                </div>
-            </div>
-
-            <!-- Column 3 -->
-            <div class="column">
-                <div class="cell">
-                    <h1>Title 3</h1>
-                </div>
-                <div class="cell">
-                    <h1>$100</h1>
-                </div>
-                <div class="cell">
-                    <h1>$200</h1>
-                </div>
-                <div class="cell">
-                    <h1>$300</h1>
-                </div>
-                <div class="cell">
-                    <h1>$400</h1>
-                </div>
-            </div>
-
-            <!-- Column 3 -->
-            <div class="column">
-                <div class="cell">
-                    <h1>Title 3</h1>
-                </div>
-                <div class="cell">
-                    <h1>$100</h1>
-                </div>
-                <div class="cell">
-                    <h1>$200</h1>
-                </div>
-                <div class="cell">
-                    <h1>$300</h1>
-                </div>
-                <div class="cell">
-                    <h1>$400</h1>
-                </div>
-            </div>
-
-            <!-- Column 4 -->
-            <div class="column">
-                <div class="cell">
-                    <h1>Title 4</h1>
-                </div>
-                <div class="cell">
-                    <h1>$100</h1>
-                </div>
-                <div class="cell">
-                    <h1>$200</h1>
-                </div>
-                <div class="cell">
-                    <h1>$300</h1>
-                </div>
-                <div class="cell">
-                    <h1>$400</h1>
-                </div>
-            </div>
-
-            <!-- Column 5 -->
-            <div class="column">
-                <div class="cell">
-                    <h1>Title 5</h1>
-                </div>
-                <div class="cell">
-                    <h1>$100</h1>
-                </div>
-                <div class="cell">
-                    <h1>$200</h1>
-                </div>
-                <div class="cell">
-                    <h1>$300</h1>
-                </div>
-                <div class="cell">
-                    <h1>$400</h1>
-                </div>
-            </div>
-        </div>
-    </form>
+        <?php endforeach; ?>
+    </div>
 
     <div class="bottom">
-        <?php echo "<div>$user1's Points: $300</div>"?>
-        <div>User 1's Turn</div>
-        <?php echo "<div>$user2's Points: $300</div>"?>
-
-</body> 
-</html> 
+        <div style="padding: 10px;">Current Turn: <?= file_exists("turn.txt") ? htmlspecialchars(trim(file_get_contents("turn.txt"))) : "User 1" ?></div>
+        <div style="padding: 10px;"><a href="start.php" style="color:white;">Start New Game</a></div>
+    </div>
+</body>
+</html>

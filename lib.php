@@ -99,3 +99,33 @@ function readQuestions() {
     curl_close ($ch);
     return json_decode($response, true);
 }
+
+function getQuestions() {
+    $file = file("questions.txt");
+    $questions = [];
+    $currentCategory = "";
+
+    for ($i = 0; $i < count($file); $i++) {
+        $line = trim($file[$i]);
+
+        if (str_starts_with($line, "Category:")) {
+            $currentCategory = trim(substr($line, 9));
+            $questions[$currentCategory] = [];
+        } elseif (str_starts_with($line, "Question:")) {
+            $questionText = trim(substr($line, 9));
+            if ($i + 1 < count($file)) {
+                $answerLine = trim($file[$i + 1]);
+                if (str_starts_with($answerLine, "Answer:")) {
+                    $answerText = trim(substr($answerLine, 7));
+                    $questions[$currentCategory][] = [
+                        'question' => $questionText,
+                        'answer' => $answerText
+                    ];
+                    $i++; // Skip the answer line
+                }
+            }
+        }
+    }
+
+    return $questions;
+}
