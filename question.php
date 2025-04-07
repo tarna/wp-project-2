@@ -8,6 +8,7 @@ $index = $_GET['index'] ?? '';
 $questions = getQuestions();
 $questionText = $questions[$category][$index]['question'];
 $correctAnswer = strtolower(trim($questions[$category][$index]['answer']));
+$boxKey = $category . '_' . $index;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userAnswer = strtolower(trim($_POST['answer']));
@@ -20,7 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "Incorrect! The correct answer was: $correctAnswer.";
     }
 
+    // Mark question as answered
+    if (!isset($_SESSION['answered'])) {
+        $_SESSION['answered'] = [];
+    }
+    if (!in_array($boxKey, $_SESSION['answered'])) {
+        $_SESSION['answered'][] = $boxKey;
+    }
+
     switchTurn();
+
     echo "<p>$message</p>";
     echo "<a href='GameBoard.php'>Return to Board</a>";
     exit;
@@ -33,11 +43,11 @@ function getCurrentUser() {
 function switchTurn() {
     $users = ["User 1", "User 2", "User 3", "User 4"];
     $current = getCurrentUser();
-    $i = array_search($current, $users);
-    $next = $users[($i + 1) % count($users)];
-    file_put_contents("turn.txt", $next);
+    $nextIndex = (array_search($current, $users) + 1) % count($users);
+    file_put_contents("turn.txt", $users[$nextIndex]);
 }
 
+// ✅ Your score update function added below:
 function updateScore($user, $points) {
     $lines = file("users.txt");
     foreach ($lines as &$line) {
@@ -53,10 +63,17 @@ function updateScore($user, $points) {
 }
 ?>
 
-<h1><?= htmlspecialchars($category) ?></h1>
-<p><?= htmlspecialchars($questionText) ?></p>
-
-<form method="POST">
-    <input type="text" name="answer" required>
-    <button type="submit">Submit Answer</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Question</title>
+</head>
+<body>
+    <h2><?= htmlspecialchars($questionText) ?></h2>
+    <form method="post">
+        <label>Your Answer:</label>
+        <input type="text" name="answer" required>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
